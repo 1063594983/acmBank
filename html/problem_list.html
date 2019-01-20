@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>ACM</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<style>
+    header {
+      position: relative;
+      width: 100%;
+      height: 50px;
+      background-color: #1e2e2e;
+    }
+    header h1 {
+      position: relative;
+      height: 50px;
+      line-height: 50px;
+      font-size: 20px;
+      color: #fff;
+      text-align: center;
+    }
+    header .left {
+      position: absolute;
+      bottom: 0;
+      left: : 0;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      font-size: 16px;
+      color: #fff;
+      text-align: center;
+    }
+    div .content {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      align-content: center;
+    }
+    div .content .pagination {
+      position: relative;
+      height: 50px;
+      width: 100%;
+    }
+	</style>
+</head>
+<body>
+  <header>
+    <h1 id="title">ECNU</h1>
+    <div class="left" tapemode onclick="api.closeWin()">
+      返回
+    </div>
+  </header>e
+  <div class="content">
+    <div class="pagination">
+      <label for="pageNum">页码</label>
+      <select class="pageNum" id="pageNum" onchange="handlePageSelect()">
+      </select>
+    </div>
+    <div class="problem_list" id="problem_list">
+
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    var listView;
+    var num;
+    var numInOnePage = 20;
+    var currentPage = 1;
+    var pageNum;
+
+    apiready = function(){
+      $api.byId('title').innerHTML = api.pageParam.title;
+      num = api.pageParam.num * 1;
+      pageNum = Math.floor(num / numInOnePage) + 1;
+      listView = api.require("listView");
+      refreshList();
+      for(var i = 1; i <= pageNum; i++) {
+        var html = '<option value="' + i + '" label="' + i + '"></option>'
+        $api.append($api.byId('pageNum'), html);
+      }
+    };
+    function handlePageSelect() {
+      currentPage = $api.byId('pageNum').value;
+      refreshList();
+    };
+    function refreshList() {
+      var problem_list = [];
+      for(var i = 1 + (currentPage - 1) * numInOnePage; i <= currentPage * numInOnePage && i <= num; i++) {
+        problem_list.push({title: '问题' + (1000 + i)})
+      }
+      listView.open({
+          h: 'auto',
+          y: 100,
+          placeholderImg: 'widget://res/listview.png',
+          data:problem_list
+      }, function(ret, err){
+          if( ret ){
+              if(ret.eventType !== 'open') {
+                api.openWin({
+                    name: 'problem',
+                    url: './problem.html',
+                    pageParam: {
+                        problem_id: 1 + (currentPage - 1) * numInOnePage + ret.index,
+                        websiteKey: api.pageParam.websiteKey
+                    }
+                });
+
+              }
+              //alert(JSON.stringify(ret))
+          }else{
+              alert( JSON.stringify( err ) );
+          }
+      });
+
+    }
+</script>
+</html>
