@@ -13,6 +13,7 @@
       height: 50px;
       background-color: #1e2e2e;
     }
+
     header h1 {
       position: relative;
       height: 50px;
@@ -72,6 +73,8 @@
     var pageNum;
 
     apiready = function(){
+      $api.fixStatusBar( $api.dom('header') );
+
       $api.byId('title').innerHTML = api.pageParam.title;
       num = api.pageParam.num * 1;
       pageNum = Math.floor(num / numInOnePage) + 1;
@@ -93,7 +96,7 @@
       }
       listView.open({
           h: 'auto',
-          y: 100,
+          y: 150,
           placeholderImg: 'widget://res/listview.png',
           data:problem_list
       }, function(ret, err){
@@ -103,7 +106,7 @@
                     name: 'problem',
                     url: './problem.html',
                     pageParam: {
-                        problem_id: 1 + (currentPage - 1) * numInOnePage + ret.index,
+                        problem_id: 1 + (currentPage - 1) * numInOnePage + ret.index + 1000,
                         websiteKey: api.pageParam.websiteKey
                     }
                 });

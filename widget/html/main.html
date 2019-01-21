@@ -8,33 +8,46 @@
     <title>Hello APP</title>
     <link rel="stylesheet" type="text/css" href="../css/api.css" />
     <style>
-        header {
-            position: relative;
-            width: 100%;
-            height: 50px;
-            background-color: #1e2e2e;
-        }
+    header {
+        position: relative;
+        width: 100%;
+        height: 50px;
+        background-color: #1e2e2e;
+    }
 
-        header h1 {
-            position: relative;
-            height: 50px;
-            line-height: 50px;
-            font-size: 20px;
-            color: #fff;
-            text-align: center;
-        }
+    header h1 {
+        position: relative;
+        height: 50px;
+        line-height: 50px;
+        font-size: 20px;
+        color: #fff;
+        text-align: center;
+    }
 
-        header .left {
-            position: absolute;
-            bottom: 0;
-            left: : 0;
-            width: 100px;
-            height: 50px;
-            line-height: 50px;
-            font-size: 16px;
-            color: #fff;
-            text-align: center;
-        }
+    header .left {
+        position: absolute;
+        bottom: 0;
+        left: : 0;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        font-size: 16px;
+        color: #fff;
+        text-align: center;
+    }
+
+    header .right {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 75px;
+      height: 50px;
+      line-height: 50px;
+      font-size: 16px;
+      color: #fff;
+      text-align: center;
+    }
+
     </style>
 </head>
 
@@ -43,6 +56,9 @@
         <h1>ACM题库</h1>
         <div class="left" id="left" tapemode>
             登录
+        </div>
+        <div class="right" id="right" tapemode>
+          个人中心
         </div>
     </header>
 </body>
@@ -60,10 +76,22 @@
 
     function logout() {
       api.setGlobalData({
-        key: 'username',
+        key: 'user',
         value: ''
       })
       $api.byId('left').innerHTML = "登录";
+    }
+
+    function openUserCenterWin() {
+      if(api.getGlobalData({key: 'user'}) != '') {
+        api.openWin({
+            name: 'user_center',
+            url: './user_center.html'
+        });
+
+      } else {
+        alert('请先登录');
+      }
     }
 
     apiready = function() {
@@ -71,36 +99,27 @@
         var leftHeader = $api.byId('left');
         $api.addEvt(leftHeader, 'click', openLoginWin, false);
 
-        var username = api.getGlobalData({key: 'username'})
 
-        if (username != "") {
+        var user = api.getGlobalData({key: 'user'})
+
+        if (user != "") {
           var button = `<button onclick="logout()">注销</button>`;
-          $api.byId('left').innerHTML =  username + button;
+          $api.byId('left').innerHTML =  JSON.parse(user).username + button;
           $api.rmEvt($api.byId('left'), 'click', openLoginWin, false);
         }
 
-        //$api.fixStatusBar( $api.dom('header') );
+        //个人中心按钮
+        var rightHeader = $api.byId('right');
+        $api.addEvt(rightHeader, 'click', openUserCenterWin, false);
+
+
+        $api.fixStatusBar( $api.dom('header') );
         api.setStatusBarStyle({
             style: 'dark',
             color: '#1e2e2e'
         });
 
         var websites = [{
-            title: 'ECNU(未完成)',
-            subTitle: '华东师范大学https://acm.ecnu.edu.cn/',
-            num: 2000,
-            key: 'ecnu'
-        }, {
-            title: 'NYOJ',
-            subTitle: '南阳理工学院http://acm.nyist.edu.cn/',
-            num: 1345,
-            key: 'nyoj'
-        }, {
-          title: 'ZOJ(未完成)',
-          subTitle: '浙江大学http://acm.zju.edu.cn',
-          num: 3046,
-          key: 'zoj'
-        }, {
           title: 'POJ',
           subTitle: '北京大学http://poj.org/',
           num: 3000,
@@ -113,7 +132,7 @@
         }]
         listView = api.require("listView");
         listView.open({
-            y: 50,
+            y: 100,
             h: 300,
             leftBtn: [{
                 color: '#8B0000',

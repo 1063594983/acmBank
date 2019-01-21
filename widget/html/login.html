@@ -72,47 +72,25 @@
               password: $api.byId('password').value
             }
         }, function(ret) {
-            if(ret == "success") {
-
-              api.setGlobalData({
-                key: 'username',
-                value: 'zou'
-              })
-              api.closeWin();
-
-
-              alert("登录成功");
-            } else {
+            if(ret == "failed") {
               alert("用户或密码错误");
+            } else {
+              api.setGlobalData({
+                key: 'user',
+                value: ret
+              })
+              alert("登录成功");
+              alert(api.getGlobalData({key: 'user'}))
+              api.closeWin();
             }
-
-            alert(ret == "failed")
-            alert(ret)
 
         }, 'text');
 
         alert('hello')
     }
-        //return false;
-        /*
-        api.ajax({
-            method: 'post',
-            url: 'http://202.182.120.248:8000/login',
-            data: {
-              body: {
-                email: $api.byId('email').value,
-                password: $api.byId('password').value
-              }
-            },
-            dataType: 'text'
-        }, function(res, err) {
-          alert(res)
-        })
-        alert('h')
-    }
-*/
-    apiready = function() {
 
+    apiready = function() {
+      $api.fixStatusBar( $api.dom('header') );
     };
 </script>
 
